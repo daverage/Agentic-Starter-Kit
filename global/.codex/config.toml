@@ -1,0 +1,24 @@
+# Global Codex CLI config — applies to all sessions on this machine.
+# Project overrides go in <project>/.codex/config.toml
+# Validated Feb 2026: https://developers.openai.com/codex/config-reference/
+
+model_reasoning_effort  = "medium"
+model_reasoning_summary = "none"
+tool_output_token_limit = 3000
+project_doc_max_bytes   = 8192
+approval_policy         = "on-request"
+sandbox_mode            = "workspace-write"
+
+[profiles.light]
+model_reasoning_effort  = "low"
+tool_output_token_limit = 1500
+
+[profiles.deep]
+model_reasoning_effort  = "high"
+tool_output_token_limit = 8000
+
+[profiles.review]
+approval_policy         = "untrusted"
+sandbox_mode            = "read-only"
+model_reasoning_effort  = "low"
+tool_output_token_limit = 2000
