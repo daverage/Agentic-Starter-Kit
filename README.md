@@ -4,36 +4,38 @@
 [![Python: 3.6+](https://img.shields.io/badge/Python-3.6+-blue.svg)](https://www.python.org/downloads/)
 [![Platform: Cross-Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](#)
 
-The **Agentic Starter Toolkit** provides instant, battle-tested, and token-optimized configurations for the next generation of AI coding agents. Stop wasting your context window and API credits on redundant logs, boilerplate, or unsafe operations.
+The **Agentic Starter Toolkit** generates starter configs for **Claude Code**, **Codex CLI**, and **Gemini CLI** with a global scope (`~/.<agent>/...`) and/or project scope (`<repo>/.<agent>/...`).
 
 ---
 
 ## 🎯 Purpose
 
-AI coding agents (Claude Code, Codex CLI, Gemini CLI) are powerful but can be expensive and noisy if not configured correctly. This toolkit automates the setup of:
+AI coding agents are powerful but can be expensive and noisy if not configured carefully. This toolkit generates:
 
-*   **Token Optimization:** Aggressive context compression and tool-output limits.
-*   **Safety Guards:** Pre-bash and pre-write hooks that block destructive commands (e.g., `rm -rf /`) and protect secrets.
-*   **Continuous Validation:** Automated linting and building on every file save, providing immediate feedback to the agent.
-*   **High-Signal Context:** Standardized `GEMINI.md`, `CLAUDE.md`, and `AGENTS.md` files to keep the AI focused on your project's architecture and stack.
+*   **Agent-specific settings:** Config files for each supported agent.
+*   **Claude project hooks:** `SessionStart`, `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, and `Stop` hooks for shell/write safety and post-write checks.
+*   **Context docs:** `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` templates with stack/build placeholders.
+*   **Gemini command templates:** `/task:plan`, `/code:review`, `/git:commit`, `/git:changelog` (Gemini CLI command files under `.gemini/commands`).
 
 ---
 
 ## ✨ Features
 
-### 🚀 Optimized Performance
-- **Quota Management:** Pre-configured `MAX_THINKING_TOKENS` and tool budgets to prevent runaway costs.
-- **Context Compression:** Forces Gemini and Claude to summarize long tool outputs.
+### Claude Code
+- **Global:** writes `~/.claude` templates (`settings.json`, `CLAUDE.md`) via installer.
+- **Project:** writes `.claude/settings.json`, `.claude/settings.windows.json`, `.claude/CLAUDE.md`, and Bash/PowerShell hook scripts.
+- **Safety controls:** deny rules in Claude settings plus pre-bash/pre-write hook checks.
+- **Validation hooks:** post-write hooks run language-aware checks when matching tools are installed.
 
-### 🛡️ Safety & Security
-- **Command Blocking:** Automatically prevents agents from executing dangerous shell patterns.
-- **Secret Protection:** Blocks writes to `.env`, `.pem`, and other sensitive files.
-- **Lockfile Integrity:** Prevents agents from manually editing `package-lock.json` or `Cargo.lock`.
+### Codex CLI
+- **Global:** writes `~/.codex/config.toml` and `~/.codex/AGENTS.md` via installer.
+- **Project:** writes `.codex/config.toml` and `.codex/AGENTS.md`.
+- **Scope:** this kit provides config/context templates only for Codex (no Codex hook scripts are generated).
 
-### 🛠️ Developer Experience
-- **Custom Slash Commands:** Adds `/task:plan`, `/code:review`, and `/git:commit` to your terminal.
-- **Unified Hooks:** Bash and PowerShell scripts that work across macOS, Linux, and Windows.
-- **Zero-Config Build:** Automatically detects your stack (C++, Rust, Go, TS, Python, etc.) and configures the appropriate build commands.
+### Gemini CLI
+- **Global:** writes `~/.gemini/settings.json`, `~/.gemini/GEMINI.md`, and `.gemini/commands/*` via installer.
+- **Project:** writes `.gemini/settings.json`, `.gemini/GEMINI.md`, `.gemini/commands/*`, and a project extension file.
+- **Commands provided:** `/task:plan`, `/code:review`, `/git:commit`, `/git:changelog` (Gemini command files, not universal terminal commands).
 
 ---
 
@@ -47,18 +49,20 @@ python3 build-agentic-kit.py
 ```
 
 ### 2. Install
-The builder generates platform-specific installers.
+If you selected **Global** or **Both**, the builder generates platform-specific installers (`install.sh`, `install.ps1`).
 
 **macOS / Linux:**
 ```bash
 ./install.sh                      # Install global defaults
-./install.sh /path/to/your/repo   # Install project-specific hooks/rules
+./install.sh /path/to/your/repo   # Install project-specific agent files
 ```
 
 **Windows (PowerShell):**
 ```powershell
 .\install.ps1 -ProjectPath C:\path\to\repo
 ```
+
+If you selected **Project only**, copy `project/.claude`, `project/.codex`, and `project/.gemini` into your repo root manually.
 
 ---
 
@@ -68,8 +72,8 @@ The toolkit organizes configuration into two distinct scopes:
 
 | Scope | Location | Usage |
 | :--- | :--- | :--- |
-| **Global** | `~/.claude`, `~/.codex`, `~/.gemini` | Machine-wide defaults, core safety rules, and universal slash commands. |
-| **Project** | `<repo_root>/.claude`, etc. | Per-repo stack definitions, custom build commands, and local conventions. |
+| **Global** | `~/.claude`, `~/.codex`, `~/.gemini` | Machine-wide defaults and context/config templates per agent. |
+| **Project** | `<repo_root>/.claude`, etc. | Per-repo overrides, Claude hooks, and Gemini project commands/context. |
 
 ### Directory Structure
 ```text
@@ -90,7 +94,7 @@ The toolkit organizes configuration into two distinct scopes:
 - **Codex CLI** (`.codex/`)
 - **Gemini CLI** (`.gemini/`)
 
-### Supported Languages (Auto-detected Hooks)
+### Supported Languages (Auto-detected Claude post-write hooks)
 - **Systems:** C++, Rust, Go, Zig
 - **Web:** TypeScript, JavaScript (Node.js)
 - **Mobile:** Swift, Kotlin, Dart/Flutter
@@ -100,7 +104,7 @@ The toolkit organizes configuration into two distinct scopes:
 
 ## 🤝 Contributing
 
-Contributions are welcome! If you have a better hook for a specific language or a new safety pattern, please open a PR.
+Contributions are welcome. Improvements to hooks, templates, or agent-specific defaults are all useful.
 
 1.  Fork the repo.
 2.  Create your feature branch.

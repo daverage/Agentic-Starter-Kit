@@ -476,9 +476,9 @@ INPUT=$(cat)
 CMD=$(echo "$INPUT" | python3 -c \\
   "import sys,json; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))" 2>/dev/null)
 PATTERNS=(
-  "rm -rf /" "rm -rf ~" "rm -rf \\$HOME" ":(){:|:&};:" "mkfs"
-  "dd if=/dev/zero" "> /dev/sd" "curl.* | bash" "curl.* | sh"
-  "wget.* | bash" "wget.* | sh" "chmod -R 777 /" "chown -R.* /"
+  "rm -rf /" "rm -rf ~" "rm -rf \\$HOME" "\\:\\(\\)\\s*\\{\\s*\\:\\|\\:\\&\\s*\\}\\s*;\\s*\\:" "mkfs"
+  "dd if=/dev/zero" "> /dev/sd" "curl[^|]*\\|[[:space:]]*(bash|sh)"
+  "wget[^|]*\\|[[:space:]]*(bash|sh)" "chmod -R 777 /" "chown -R.* /"
 )
 for p in "${PATTERNS[@]}"; do
   if echo "$CMD" | grep -qiE "$p"; then
@@ -550,7 +550,8 @@ case "$EXT" in
       chk_sh "cargo" "cargo check --manifest-path '$ROOT/Cargo.toml' --quiet 2>&1 | tail -30" ;;
   go)
     command -v go >/dev/null 2>&1 && [ -f "$ROOT/go.mod" ] &&
-      { chk "go build" go build "$ROOT/..."; chk "go vet" go vet "$ROOT/..."; } ;;
+      { chk_sh "go build" "cd '$ROOT' && go build ./... 2>&1 | tail -30"
+        chk_sh "go vet" "cd '$ROOT' && go vet ./... 2>&1 | tail -30"; } ;;
   js|jsx|mjs|cjs)
     command -v eslint >/dev/null 2>&1 &&
       [ -n "$(find "$ROOT" -maxdepth 2 \\( -name '.eslintrc*' -o -name 'eslint.config*' \\) | head -1)" ] &&
@@ -699,6 +700,7 @@ if (-not $file) { exit 0 }
 $ext  = [IO.Path]::GetExtension($file).TrimStart(".").ToLower()
 $root = if ($env:CLAUDE_PROJECT_DIR) { $env:CLAUDE_PROJECT_DIR } else { (Get-Location).Path }
 $ncpu = (Get-CimInstance Win32_Processor).NumberOfLogicalProcessors
+Set-Location $root -ErrorAction SilentlyContinue
 
 function Chk($label, $cmd) {
   $out = Invoke-Expression $cmd 2>&1
@@ -721,7 +723,7 @@ switch -Regex ($ext) {
     }
   }
   "^rs$"  { if ((Get-Command cargo -EA SilentlyContinue) -and (Test-Path "$root\\\\Cargo.toml"))  { Chk "cargo"   "cargo check --manifest-path '$root\\\\Cargo.toml' --quiet" } }
-  "^go$"  { if ((Get-Command go    -EA SilentlyContinue) -and (Test-Path "$root\\\\go.mod"))      { Chk "go build" "go build $root\\\\..."; Chk "go vet" "go vet $root\\\\..." } }
+  "^go$"  { if ((Get-Command go    -EA SilentlyContinue) -and (Test-Path "$root\\\\go.mod"))      { Chk "go build" "go build ./..."; Chk "go vet" "go vet ./..." } }
   "^(ts|tsx|mts|cts)$" {
     if (Get-Command tsc -EA SilentlyContinue) {
       $tc = Get-ChildItem $root -Depth 2 -Filter "tsconfig*.json" | Select-Object -First 1
