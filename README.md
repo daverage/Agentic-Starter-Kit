@@ -6,6 +6,15 @@
 
 The **Agentic Starter Toolkit** generates starter configs for **Claude Code**, **Codex CLI**, and **Gemini CLI** with a global scope (`~/.<agent>/...`) and/or project scope (`<repo>/.<agent>/...`).
 
+## TL;DR
+
+Use this when you want a fast, repeatable setup for AI coding agents across repos and machines.
+
+- Generates baseline config/context files for Claude Code, Codex CLI, and Gemini CLI.
+- Adds Claude project hooks for command/write safety and post-write validation.
+- Adds Gemini command templates (`/task:plan`, `/code:review`, `/git:commit`, `/git:changelog`).
+- Supports global and project scopes so you can choose machine defaults, repo-specific rules, or both.
+
 ---
 
 ## 🎯 Purpose

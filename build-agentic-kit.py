@@ -132,25 +132,30 @@ GLOBAL_CLAUDE_MD = """# Global Claude Code Rules
 # Project rules go in <project>/.claude/CLAUDE.md — do not duplicate here.
 # Keep lean: every token here costs quota on every prompt.
 
-## Core
+## Core Rules
 - Simplicity first. Touch minimal code. Find root causes, not workarounds.
-- Never mark a task done without proving it works.
-- Fix bugs autonomously.
+- Never mark done without proving it works (tests, logs, diff).
+- For non-trivial changes: pause and ask if there is a more elegant solution.
+- Bug reports: fix autonomously. No hand-holding needed.
 
-## Context
-- Read only specific files needed. Never explore broadly unless asked.
-- Use /clear between unrelated tasks to reset accumulated context.
-- Reference exact file paths, not vague descriptions.
-- Keep responses concise. No padding.
+## Context Management
+- Use /clear between unrelated tasks. Do not carry stale context.
+- Read only the specific files needed. Never explore broadly unless asked.
 
 ## Planning
-- Non-trivial tasks (3+ steps): write a brief plan first, check in before executing.
-- Simple fixes: skip planning overhead.
+- Non-trivial tasks (3+ steps): write a brief plan to `tasks/todo.md` first, then check in.
+- If something goes sideways, stop and re-plan. Do not push through.
+- Simple or obvious fixes: skip planning overhead entirely.
 
 ## Subagents
-- Use only when genuine parallelism is needed.
-- Return summaries, not full file contents.
-- Never spawn a subagent for a single-file task.
+- Use only when genuine parallelism is needed, not by default.
+- One focused task per subagent. Keep spawn prompts minimal.
+- Clean up subagents when done. Idle ones still consume tokens.
+
+## Lessons
+- After any user correction, append one concise rule to `tasks/lessons.md`.
+- Keep lessons under 30 entries. Prune redundant ones.
+- Load lessons only when starting work on a relevant project, not by default.
 
 ## Git
 - Never commit without being asked.
@@ -190,13 +195,28 @@ GLOBAL_AGENTS_MD = """# Global AGENTS.md
 
 ## Core Rules
 - Simplicity first. Touch minimal code. Find root causes, not workarounds.
-- Never mark a task done without proving it works.
+- Never mark done without proving it works (tests, logs, diff).
+- For non-trivial changes: pause and ask if there is a more elegant solution.
+- Bug reports: fix autonomously. No hand-holding needed.
 
-## Context
-- Read only specific files needed. Keep responses concise.
+## Context Management
+- Use /clear between unrelated tasks. Do not carry stale context.
+- Read only the specific files needed. Never explore broadly unless asked.
 
 ## Planning
-- Non-trivial tasks: plan first, check in before executing.
+- Non-trivial tasks (3+ steps): write a brief plan to `tasks/todo.md` first, then check in.
+- If something goes sideways, stop and re-plan. Do not push through.
+- Simple or obvious fixes: skip planning overhead entirely.
+
+## Subagents
+- Use only when genuine parallelism is needed, not by default.
+- One focused task per subagent. Keep spawn prompts minimal.
+- Clean up subagents when done. Idle ones still consume tokens.
+
+## Lessons
+- After any user correction, append one concise rule to `tasks/lessons.md`.
+- Keep lessons under 30 entries. Prune redundant ones.
+- Load lessons only when starting work on a relevant project, not by default.
 
 ## Git
 - Never commit without being asked.
@@ -225,9 +245,28 @@ GLOBAL_GEMINI_MD = """# Global Gemini CLI Context
 
 ## Core Rules
 - Simplicity first. Touch minimal code. Find root causes, not workarounds.
-- Never mark a task done without proving it works.
-- Use /clear between unrelated tasks.
-- Keep responses concise.
+- Never mark done without proving it works (tests, logs, diff).
+- For non-trivial changes: pause and ask if there is a more elegant solution.
+- Bug reports: fix autonomously. No hand-holding needed.
+
+## Context Management
+- Use /clear between unrelated tasks. Do not carry stale context.
+- Read only the specific files needed. Never explore broadly unless asked.
+
+## Planning
+- Non-trivial tasks (3+ steps): write a brief plan to `tasks/todo.md` first, then check in.
+- If something goes sideways, stop and re-plan. Do not push through.
+- Simple or obvious fixes: skip planning overhead entirely.
+
+## Subagents
+- Use only when genuine parallelism is needed, not by default.
+- One focused task per subagent. Keep spawn prompts minimal.
+- Clean up subagents when done. Idle ones still consume tokens.
+
+## Lessons
+- After any user correction, append one concise rule to `tasks/lessons.md`.
+- Keep lessons under 30 entries. Prune redundant ones.
+- Load lessons only when starting work on a relevant project, not by default.
 
 ## Git
 - Never commit without being asked.
@@ -311,10 +350,30 @@ def project_claude_md(lang, cmd):
 # Primary language: {lang}
 # Build command:    {cmd}
 
-## Conventions
-# Add project-specific coding conventions here.
-# e.g. "Use snake_case for all identifiers"
-# e.g. "All public functions must have a docstring"
+## Core Rules
+- Simplicity first. Touch minimal code. Find root causes, not workarounds.
+- Never mark done without proving it works (tests, logs, diff).
+- For non-trivial changes: pause and ask if there is a more elegant solution.
+- Bug reports: fix autonomously. No hand-holding needed.
+
+## Context Management
+- Use /clear between unrelated tasks. Do not carry stale context.
+- Read only the specific files needed. Never explore broadly unless asked.
+
+## Planning
+- Non-trivial tasks (3+ steps): write a brief plan to `tasks/todo.md` first, then check in.
+- If something goes sideways, stop and re-plan. Do not push through.
+- Simple or obvious fixes: skip planning overhead entirely.
+
+## Subagents
+- Use only when genuine parallelism is needed, not by default.
+- One focused task per subagent. Keep spawn prompts minimal.
+- Clean up subagents when done. Idle ones still consume tokens.
+
+## Lessons
+- After any user correction, append one concise rule to `tasks/lessons.md`.
+- Keep lessons under 30 entries. Prune redundant ones.
+- Load lessons only when starting work on a relevant project, not by default.
 """
 
 def project_agents_md(lang, cmd):
@@ -327,8 +386,30 @@ def project_agents_md(lang, cmd):
 # Primary language: {lang}
 # Build command:    {cmd}
 
-## Conventions
-# Add project-specific instructions here.
+## Core Rules
+- Simplicity first. Touch minimal code. Find root causes, not workarounds.
+- Never mark done without proving it works (tests, logs, diff).
+- For non-trivial changes: pause and ask if there is a more elegant solution.
+- Bug reports: fix autonomously. No hand-holding needed.
+
+## Context Management
+- Use /clear between unrelated tasks. Do not carry stale context.
+- Read only the specific files needed. Never explore broadly unless asked.
+
+## Planning
+- Non-trivial tasks (3+ steps): write a brief plan to `tasks/todo.md` first, then check in.
+- If something goes sideways, stop and re-plan. Do not push through.
+- Simple or obvious fixes: skip planning overhead entirely.
+
+## Subagents
+- Use only when genuine parallelism is needed, not by default.
+- One focused task per subagent. Keep spawn prompts minimal.
+- Clean up subagents when done. Idle ones still consume tokens.
+
+## Lessons
+- After any user correction, append one concise rule to `tasks/lessons.md`.
+- Keep lessons under 30 entries. Prune redundant ones.
+- Load lessons only when starting work on a relevant project, not by default.
 """
 
 def project_gemini_md(lang, cmd):
@@ -339,6 +420,31 @@ def project_gemini_md(lang, cmd):
 ## Stack
 # Primary language: {lang}
 # Build command:    {cmd}
+
+## Core Rules
+- Simplicity first. Touch minimal code. Find root causes, not workarounds.
+- Never mark done without proving it works (tests, logs, diff).
+- For non-trivial changes: pause and ask if there is a more elegant solution.
+- Bug reports: fix autonomously. No hand-holding needed.
+
+## Context Management
+- Use /clear between unrelated tasks. Do not carry stale context.
+- Read only the specific files needed. Never explore broadly unless asked.
+
+## Planning
+- Non-trivial tasks (3+ steps): write a brief plan to `tasks/todo.md` first, then check in.
+- If something goes sideways, stop and re-plan. Do not push through.
+- Simple or obvious fixes: skip planning overhead entirely.
+
+## Subagents
+- Use only when genuine parallelism is needed, not by default.
+- One focused task per subagent. Keep spawn prompts minimal.
+- Clean up subagents when done. Idle ones still consume tokens.
+
+## Lessons
+- After any user correction, append one concise rule to `tasks/lessons.md`.
+- Keep lessons under 30 entries. Prune redundant ones.
+- Load lessons only when starting work on a relevant project, not by default.
 """
 
 PROJECT_CLAUDE_SETTINGS = """{
